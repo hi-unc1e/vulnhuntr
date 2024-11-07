@@ -7,6 +7,12 @@ import openai
 import dotenv
 import requests
 
+def try_trim_to_json(s):
+    s = s.replace("\n", "")
+    s = s.replace("```json", "")
+    s = s.replace("```", "")
+    return s
+
 dotenv.load_dotenv()
 
 log = logging.getLogger(__name__)
@@ -40,6 +46,7 @@ class LLM:
         try:
             if self.prefill:
                 response_text = self.prefill + response_text
+                response_text = try_trim_to_json(response_text)
             return response_model.model_validate_json(response_text)
         except ValidationError as e:
             log.warning("[-] Response validation failed\n", exc_info=e)
