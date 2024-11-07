@@ -44,9 +44,9 @@ class LLM:
 
     def _validate_response(self, response_text: str, response_model: BaseModel) -> BaseModel:
         try:
+            response_text = try_trim_to_json(response_text)
             if self.prefill:
                 response_text = self.prefill + response_text
-                response_text = try_trim_to_json(response_text)
             return response_model.model_validate_json(response_text)
         except ValidationError as e:
             log.warning("[-] Response validation failed\n", exc_info=e)
